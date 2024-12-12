@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Login_Signup.css";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Login_Signup() {
@@ -7,7 +8,9 @@ function Login_Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [errors, setErrors] = useState({});
+  
+  
   //input handling
 
   const nameHandle = (event) => {
@@ -25,16 +28,50 @@ function Login_Signup() {
   const updateState = () => {
     setLogin(!isLogin);
   };
+  //form validation
 
+  const validateEmail = (email)=>{
+    const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailReg.test(email);
+  }
+
+  const validatePassword = (password)=>{
+    const minLength =password.length>=8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    return minLength && hasUppercase && hasSpecialChar;
+
+  }
+
+  const formValidation = ()=>{
+  let validationErrors  = {};
+
+  if(!name && !isLogin) validationErrors.name="Name is required";
+  if(!email || !validateEmail(email)) validationErrors.email="inavlid email"
+  if(!password || !validatePassword(password))validationErrors.password="password must have specialcharacter and uppercase"
+  setErrors(validationErrors);
+  return Object.keys(validationErrors).length === 0;
+  }
   //login logic
   const userLogin = (event) => {
+    if(!formValidation())return;
     console.log(email);
   };
 
   //sigun logic
 
-  const userRegister = (event) => {
-    console.log(name);
+  const userRegister = async() => {
+    if(!formValidation()) return;
+    try{
+      const response = await axios.post("http://localhost:3001/api/users/register",{
+        name,email,password
+      });
+      console.log(response);
+      
+    }catch(err){
+      console.log(err.message);
+      
+    }
   };
 
   //design
@@ -45,7 +82,8 @@ function Login_Signup() {
       {isLogin ? (
         <form action="" autoComplete="on">
           <h2>Login Now</h2>
-          <div className="inputs">
+            <div className="inputs">
+            
             <img src="/assets/email.svg" alt="" width="20px" />
             <input
               type="email"
@@ -87,7 +125,10 @@ function Login_Signup() {
             <p>
               New User ?<span onClick={updateState}> Signup Now</span>
             </p>
-          </div>
+          </div>          
+          {errors && <div className="error">{errors.email||errors.password}  
+               
+          </div>}
         </form>
       ) : (
         //signup page
@@ -134,6 +175,9 @@ function Login_Signup() {
               Already registered ?<span onClick={updateState}> Login</span>
             </p>
           </div>
+          {errors && <div className="error">{errors.name||errors.email||errors.password}  
+               
+          </div>}
         </form>
       )}
     </div>
