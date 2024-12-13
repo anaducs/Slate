@@ -11,6 +11,7 @@ function Login_Signup() {
   const [errors, setErrors] = useState({});
   const [serverResponse, setServerResponse] = useState({});
   const [serverResponsefS, setServerResponsefS] = useState("");
+  const [emailVerify, setEmailVerify] = useState("");
 
   //input handling
 
@@ -71,9 +72,27 @@ function Login_Signup() {
     }
   };
 
-  //singup logic
+  //signupmessages
+
+  const signupMessag = () => {
+    if (emailVerify) {     
+        return <div className="mailverify">{emailVerify}</div>;
+      } else if (serverResponsefS) {
+        return <div className="error"> {serverResponsefS}</div>;
+      }
+     else {
+      return (
+        <div className="error">
+          {errors.name || errors.email || errors.password}
+        </div>
+      );
+    }
+  };
+
+  //signup logic
 
   const userRegister = async () => {
+    let msg = "";
     if (!formValidation()) return;
     try {
       const response = await axios.post(
@@ -84,7 +103,9 @@ function Login_Signup() {
           password,
         }
       );
-    } catch (err) {
+      msg = response.data.msg;
+      setEmailVerify(msg);
+      } catch (err) {
       let errors = "";
       if (axios.isAxiosError(err)) {
         const stat = err.response.data.msg;
@@ -196,7 +217,8 @@ function Login_Signup() {
                 setTimeout(() => {
                   setServerResponsefS("");
                   setErrors({});
-                }, 600);
+                  setEmailVerify("");
+                }, 1000);
               }}
             />
             <p>
@@ -215,12 +237,7 @@ function Login_Signup() {
               </span>
             </p>
           </div>
-          {serverResponsefS && <div className="error"> {serverResponsefS}</div>}
-          {errors && (
-            <div className="error">
-              {errors.name || errors.email || errors.password}
-            </div>
-          )}
+          {signupMessag()}
         </form>
       )}
     </div>
