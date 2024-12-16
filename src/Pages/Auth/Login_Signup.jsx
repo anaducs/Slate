@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Login_Signup.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login_Signup() {
   const [isLogin, setLogin] = useState(false);
@@ -12,6 +12,7 @@ function Login_Signup() {
   const [serverResponse, setServerResponse] = useState({});
   const [serverResponsefS, setServerResponsefS] = useState("");
   const [emailVerify, setEmailVerify] = useState("");
+  const navigate = useNavigate();
 
   //input handling
 
@@ -58,29 +59,33 @@ function Login_Signup() {
   };
   //login logic
   const userLogin = async () => {
-    // if (!formValidation()) return;
+    if (!formValidation()) return;
     try {
       let errors = {};
       const response = await axios.post(
         "http://localhost:3001/api/users/login",
-        { email, password }
+        { email, password },
+        { withCredentials: true }
       );
+      navigate("/dashboard");
       errors.msg = response.data.msg;
       setServerResponse(errors);
     } catch (err) {
-      //error
+      setServerResponse(err);
     }
   };
 
   //signupmessages
 
   const signupMessag = () => {
-    if (emailVerify) {     
-        return <div className="mailverify">{emailVerify}</div>;
-      } else if (serverResponsefS) {
-        return <div className="error"> {serverResponsefS}</div>;
-      }
-     else {
+    if (emailVerify) {
+      setTimeout(() => {
+        setEmailVerify("");
+      }, 1000);
+      return <div className="mailverify">{emailVerify}</div>;
+    } else if (serverResponsefS) {
+      return <div className="error"> {serverResponsefS}</div>;
+    } else {
       return (
         <div className="error">
           {errors.name || errors.email || errors.password}
@@ -105,7 +110,8 @@ function Login_Signup() {
       );
       msg = response.data.msg;
       setEmailVerify(msg);
-      } catch (err) {
+      console.log(msg);
+    } catch (err) {
       let errors = "";
       if (axios.isAxiosError(err)) {
         const stat = err.response.data.msg;
@@ -237,7 +243,7 @@ function Login_Signup() {
               </span>
             </p>
           </div>
-          {signupMessag()}
+          {signupMessag() && signupMessag()}
         </form>
       )}
     </div>

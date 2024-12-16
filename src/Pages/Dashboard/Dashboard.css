@@ -1,0 +1,64 @@
+.Dashboard-container .gridcontainer{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 70px 1fr 100px;
+    grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+    gap: 5px;
+    margin: 5px 15px;
+
+   
+  
+}
+.Dashboard-container .gridcontainer .header{
+grid-area: header;
+height: 100%;
+display: grid;
+grid-template-columns: 200px 1fr 200px;
+
+
+
+}
+.Dashboard-container .gridcontainer .main-section{
+    grid-area: main;
+    background-color: aqua;
+    
+}
+.Dashboard-container .gridcontainer .footer-section{
+    grid-area: footer;
+}
+
+
+.Dashboard-container .gridcontainer .header .searchBar{
+    width: 100%;
+    overflow: hidden;
+    align-self:center;
+    text-align: center;
+
+    
+    }
+.Dashboard-container .gridcontainer .header .profile,.Dashboard-container .gridcontainer .Slate{
+        width: 100%;
+        text-align: center;        
+        overflow: hidden;
+        align-self:center;
+
+        }
+ .Dashboard-container .gridcontainer .header .searchBar input{
+    width: 80%;
+    padding:1rem ;
+    border: none;
+    outline: none;
+    background-color: rgba(128, 128, 128, 0.12);
+    border-radius: 20px;
+    overflow: hidden;}
+    
+    .Dashboard-container .gridcontainer .header .profile{
+        
+        display: flex;
+        gap:15px;
+        justify-self: self-start;
+    }
