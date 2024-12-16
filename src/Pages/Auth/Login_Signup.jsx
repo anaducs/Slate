@@ -142,6 +142,7 @@ function Login_Signup() {
           <div className="inputs mg">
             <img src="/assets/pass.svg" alt="" width="20px" />
             <input
+              autoComplete="on"
               name="password"
               type="password"
               placeholder="password"
