@@ -4,7 +4,7 @@ import "./Dashboard.css";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [cardData, setCardData] = useState(null);
 
   useEffect(() => {
     const url = "http://localhost:3001/api/users/dashboard";
@@ -20,6 +20,19 @@ function Dashboard() {
     }
   }, []);
 
+  //cardGenerator
+
+  const cards = [
+    {
+      name: "anandu",
+      id: "01",
+    },
+    { name: "suchjith", id: "02" },
+  ];
+  const recentCardMaker = (name, id) => {
+    return;
+  };
+
   return (
     <>
       <div className="Dashboard-container">
@@ -29,20 +42,63 @@ function Dashboard() {
               <h3>Slate</h3>
             </div>
             <div className="searchBar">
-              <input type="text"/>
-              
+              <input
+                type="text"
+                placeholder="search"
+                style={{ color: "grey", fontSize: "18px" }}
+              />
             </div>
             <div className="profile">
-                <h4>{user && user.name}</h4>
-                <button>Logout</button>
-               
+              <h4>{user && user.name}</h4>
+              <button>Logout</button>
             </div>
           </header>
           <main className="main-section">
             <div className="createCard">
-              <h1>+</h1>
+              <div>
+                <h3>Create New Document</h3>
+              </div>
+              <div className="card">
+                <div className="img-wrap">
+                  <img
+                    src="public/assets/create.svg"
+                    style={{ width: "80px" }}
+                    alt="+"
+                  />
+                </div>
+
+                <h4>Blank Document</h4>
+              </div>
             </div>
-            <div className="recentCard"></div>
+            <div className="recentCard">
+              <div>
+                <h3>Recent documents</h3>
+              </div>
+              <div className="recentFlex">
+                <div className="dynamic-container">
+                  <div className="imagewrap">  
+                  <img
+                    src="public/assets/create.svg"
+                    style={{ width: "80px" }}
+                    alt="+"
+                  />                  
+                  </div>
+                  <h4>document</h4>
+
+                </div>
+                <div className="dynamic-container">
+                  <div className="imagewrap">  
+                  <img
+                    src="public/assets/create.svg"
+                    style={{ width: "80px" }}
+                    alt="+"
+                  />                  
+                  </div>
+                  <h4>document</h4>
+
+                </div>
+              </div>
+            </div>
           </main>
           <footer className="footer-section">
             <p>&copy; cs</p>
