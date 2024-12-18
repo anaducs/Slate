@@ -17,6 +17,8 @@ function Dashboard() {
       const fetchData = async () => {
         const response = await axios.get(url, { withCredentials: true });
         const userData = response.data.user;
+        console.log(response);
+
         setUser(userData);
       };
       fetchData();
@@ -24,15 +26,14 @@ function Dashboard() {
       console.log(e);
     }
   }, []);
-  //open recent documents
-  const handleRecentDocument = async()=>{
 
-  }
+  //open recent documents
+  const handleRecentDocument = async () => {};
 
   //open new document
-  const handleCreateNewDocument = async()=>{
-    
-  }
+  const handleNewDocument = () => {
+    navigate("/document");
+  };
 
   //cardGenerator
   useEffect(() => {
@@ -95,7 +96,7 @@ function Dashboard() {
                 <h3>Create New Document</h3>
               </div>
               <div className="card">
-                <div className="img-wrap">
+                <div className="img-wrap" onClick={handleNewDocument}>
                   <img
                     src="public/assets/create.svg"
                     style={{ width: "80px" }}
@@ -116,7 +117,12 @@ function Dashboard() {
                 <div className="recentFlex">
                   {cardData.map((card) => {
                     return (
-                      <Cards key={card.id} name={card.name} id={card.id} onCardClick={handleRecentDocument}/>
+                      <Cards
+                        key={card.id}
+                        name={card.name}
+                        id={card.id}
+                        onCardClick={handleRecentDocument}
+                      />
                     );
                   })}
                 </div>
