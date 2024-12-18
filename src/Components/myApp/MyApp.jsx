@@ -4,6 +4,7 @@ import "./MyApp.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ResetPass from "../../Pages/Auth/ResetPass";
 import Dashboard from "../../Pages/Dashboard/Dashboard";
+import NewDocument from "../../Pages/NewDocument/NewDocument";
 
 function MyApp() {
   return (
@@ -13,6 +14,7 @@ function MyApp() {
           <Route exact path="/" element={<Login_Signup />} />
           <Route path="/resetpass" element={<ResetPass />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/newdocument"  element={<NewDocument/>}/>
         </Routes>
       </Router>
     </>

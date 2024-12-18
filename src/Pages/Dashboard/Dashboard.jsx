@@ -30,8 +30,8 @@ function Dashboard() {
   }
 
   //open new document
-  const handleCreateNewDocument = async()=>{
-    
+  const handleNewDocument = ()=>{
+    navigate('/newdocument')
   }
 
   //cardGenerator
@@ -95,7 +95,7 @@ function Dashboard() {
                 <h3>Create New Document</h3>
               </div>
               <div className="card">
-                <div className="img-wrap">
+                <div className="img-wrap" onClick={handleNewDocument}>
                   <img
                     src="public/assets/create.svg"
                     style={{ width: "80px" }}
