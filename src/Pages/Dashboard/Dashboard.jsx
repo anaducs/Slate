@@ -1,10 +1,9 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Dashboard.css";
 import Cards from "../../Components/cards/Cards";
-
 
 function Dashboard({ onUserLogin }) {
   const [user, setUser] = useState(null);
@@ -21,17 +20,18 @@ function Dashboard({ onUserLogin }) {
       const fetchData = async () => {
         const response = await axios.get(url, { withCredentials: true });
         const userData = response.data.user;
+        const useris = userData.id;
+        onUserLogin(useris);
         setUser(userData);
       };
+
       fetchData();
-      onUserLogin(user);
     } catch (e) {
       console.log(e);
     }
   }, []);
 
   //open recent documents
-  
 
   //open new document
   const handleNewDocument = () => {
@@ -49,12 +49,9 @@ function Dashboard({ onUserLogin }) {
         (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
       );
       setCardData(recentdoc);
-      console.log(recentdoc);
     };
     fetchData();
   }, []);
-
-  console.log("card", cardData);
 
   //logout
   const logout = "http://localhost:3001/api/users/logout";
@@ -124,7 +121,7 @@ function Dashboard({ onUserLogin }) {
                       <Cards
                         key={card._id}
                         id={card.name}
-                        onCardClick={()=>{
+                        onCardClick={() => {
                           navigate(`/document/${user.id}/${card._id}`);
                         }}
                       />

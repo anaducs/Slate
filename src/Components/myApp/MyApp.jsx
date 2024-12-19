@@ -15,7 +15,6 @@ import { v4 as uuidv4 } from "uuid";
 
 function MyApp() {
   const [user, setUser] = useState(null);
-
   const userHandle = (value) => {
     setUser(value);
   };
@@ -25,11 +24,14 @@ function MyApp() {
         <Routes>
           <Route exact path="/" element={<Login_Signup />} />
           <Route path="/resetpass" element={<ResetPass />} />
-          <Route path="/dashboard" element={<Dashboard  onUserLogin={userHandle}/>} />         
+          <Route
+            path="/dashboard"
+            element={<Dashboard onUserLogin={userHandle} />}
+          />
           {user ? (
             <Route
               path="/document"
-              element={<Navigate to={`/document/${user.id}/${uuidv4()}`} />}
+              element={<Navigate to={`/document/${user}/${uuidv4()}`} />}
             />
           ) : (
             <Route path="/document" element={<Navigate to={"/"} />} />
