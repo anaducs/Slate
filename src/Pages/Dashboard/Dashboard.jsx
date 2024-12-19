@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
+
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Dashboard.css";
 import Cards from "../../Components/cards/Cards";
 
-function Dashboard() {
+
+function Dashboard({ onUserLogin }) {
   const [user, setUser] = useState(null);
   const [cardData, setCardData] = useState([]);
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
   const navigate = useNavigate();
+  const [document, setDocument] = useState(null);
+  const params = useParams();
 
   useEffect(() => {
     const url = "http://localhost:3001/api/users/dashboard";
@@ -17,18 +21,17 @@ function Dashboard() {
       const fetchData = async () => {
         const response = await axios.get(url, { withCredentials: true });
         const userData = response.data.user;
-        console.log(response);
-
         setUser(userData);
       };
       fetchData();
+      onUserLogin(user);
     } catch (e) {
       console.log(e);
     }
   }, []);
 
   //open recent documents
-  const handleRecentDocument = async () => {};
+  
 
   //open new document
   const handleNewDocument = () => {
@@ -37,26 +40,27 @@ function Dashboard() {
 
   //cardGenerator
   useEffect(() => {
-    const fetchData = () => {
-      const cards = [
-        {
-          name: "anandu",
-          id: 1,
-        },
-        { name: "thathamma", id: 2 },
-      ];
-      setCardData(cards);
+    const fetchData = async () => {
+      const url = "http://localhost:3001/api/users/getDocument";
+      const response = await axios.get(url, { withCredentials: true });
+      const userDocuments = response.data;
+      //limit output to 5 elements
+      const recentdoc = userDocuments.sort(
+        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+      );
+      setCardData(recentdoc);
+      console.log(recentdoc);
     };
     fetchData();
   }, []);
+
+  console.log("card", cardData);
 
   //logout
   const logout = "http://localhost:3001/api/users/logout";
   const handleLogout = async () => {
     try {
       const res = await axios.post(logout, {}, { withCredentials: true });
-      console.log(res);
-
       navigate("/");
     } catch (e) {}
   };
@@ -118,10 +122,11 @@ function Dashboard() {
                   {cardData.map((card) => {
                     return (
                       <Cards
-                        key={card.id}
-                        name={card.name}
-                        id={card.id}
-                        onCardClick={handleRecentDocument}
+                        key={card._id}
+                        id={card.name}
+                        onCardClick={()=>{
+                          navigate(`/document/${user.id}/${card._id}`);
+                        }}
                       />
                     );
                   })}

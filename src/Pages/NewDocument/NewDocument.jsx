@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
@@ -21,9 +21,11 @@ const toolbarOptions = [
 ];
 
 function NewDocument() {
+  const [error,setError] = useState("");
   const [socket, setSocket] = useState(null);
   const [quill, setQuill] = useState(null);
-  const { id: documentId } = useParams();
+  const { id: documentId, uid: userId } = useParams();
+  const navigate = useNavigate();
 
   const wrapperRef = useCallback((wrap) => {
     if (wrap == null) return;
@@ -41,13 +43,38 @@ function NewDocument() {
   }, []);
   //connect to server
   useEffect(() => {
-    const sock = io("http://localhost:3001");
+    const sock = io("http://localhost:3001", {
+      withCredentials: true,  
+    });
+    
     setSocket(sock);
 
     return () => {
       sock.disconnect();
     };
   }, []);
+
+  //global error function
+
+
+
+  //errorHandling
+  useEffect(()=>{
+      const errorHandler = (error)=>{
+      setError(error)
+      navigate('/dashboard');
+
+
+    socket.on('error',errorHandler);
+
+    return()=>{
+      socket.off('error',errorHandler);
+      setError("");
+    }
+    }
+
+  },[socket])
+
 
   //text change detect
   useEffect(() => {
@@ -86,7 +113,7 @@ function NewDocument() {
       quill.enable();
     });
 
-    socket.emit("get-document", documentId);
+    socket.emit("get-document", userId, documentId);
   }, [socket, quill, documentId]);
 
   //save document
@@ -103,3 +130,5 @@ function NewDocument() {
 }
 
 export default NewDocument;
+
+

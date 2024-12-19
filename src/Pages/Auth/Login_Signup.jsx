@@ -3,7 +3,7 @@ import "./Login_Signup.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-function Login_Signup() {
+function Login_Signup({ onUserLogin }) {
   const [isLogin, setLogin] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -61,17 +61,21 @@ function Login_Signup() {
   const userLogin = async () => {
     if (!formValidation()) return;
     try {
-      let errors = {};
       const response = await axios.post(
         "http://localhost:3001/api/users/login",
         { email, password },
         { withCredentials: true }
       );
+      const data = response.data.user;
+      
+     
+
       navigate("/dashboard");
-      errors.msg = response.data.msg;
-      setServerResponse(errors);
     } catch (err) {
-      setServerResponse(err);
+      let errors = {};
+      const msg = errors.msg;
+      errors = msg;
+      setServerResponse(errors);
     }
   };
 
