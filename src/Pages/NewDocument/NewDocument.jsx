@@ -23,7 +23,7 @@ const toolbarOptions = [
 function NewDocument() {
   const [socket, setSocket] = useState(null);
   const [quill, setQuill] = useState(null);
-  const { id: documentId } = useParams();
+  const { id: documentId, uid: userId } = useParams();
 
   const wrapperRef = useCallback((wrap) => {
     if (wrap == null) return;
@@ -41,7 +41,10 @@ function NewDocument() {
   }, []);
   //connect to server
   useEffect(() => {
-    const sock = io("http://localhost:3001");
+    const sock = io("http://localhost:3001", {
+      withCredentials: true,  
+    });
+    
     setSocket(sock);
 
     return () => {
@@ -86,7 +89,7 @@ function NewDocument() {
       quill.enable();
     });
 
-    socket.emit("get-document", documentId);
+    socket.emit("get-document", userId, documentId);
   }, [socket, quill, documentId]);
 
   //save document

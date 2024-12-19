@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import Cards from "../../Components/cards/Cards";
 
-function Dashboard() {
+function Dashboard({ onUserLogin }) {
   const [user, setUser] = useState(null);
   const [cardData, setCardData] = useState([]);
   const [input, setInput] = useState("");
@@ -17,8 +18,7 @@ function Dashboard() {
       const fetchData = async () => {
         const response = await axios.get(url, { withCredentials: true });
         const userData = response.data.user;
-        console.log(response);
-
+        onUserLogin(userData);
         setUser(userData);
       };
       fetchData();
@@ -55,8 +55,7 @@ function Dashboard() {
   const handleLogout = async () => {
     try {
       const res = await axios.post(logout, {}, { withCredentials: true });
-      console.log(res);
-
+      onUserLogin(null);
       navigate("/");
     } catch (e) {}
   };
