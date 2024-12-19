@@ -19,24 +19,20 @@ function MyApp() {
   const userHandle = (value) => {
     setUser(value);
   };
-
   return (
     <>
       <Router>
         <Routes>
           <Route exact path="/" element={<Login_Signup />} />
           <Route path="/resetpass" element={<ResetPass />} />
-          <Route
-            path="/dashboard"
-            element={<Dashboard onUserLogin={userHandle} />}
-          />
+          <Route path="/dashboard" element={<Dashboard  onUserLogin={userHandle}/>} />         
           {user ? (
             <Route
               path="/document"
               element={<Navigate to={`/document/${user.id}/${uuidv4()}`} />}
             />
           ) : (
-            <Route exact path="/" element={<Login_Signup />} />
+            <Route path="/document" element={<Navigate to={"/"} />} />
           )}
 
           <Route path="/document/:uid/:id" element={<NewDocument />} />
