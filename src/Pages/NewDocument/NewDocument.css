@@ -23,14 +23,26 @@ body {
 
 .container .ql-toolbar {
   display: flex;
-  justify-content: center;
   position: sticky;
+  align-items: center;
+  justify-content: center;
   top: 0;
   z-index: 2;
+  padding: 0;
   background-color: rgb(205, 243, 254);
   border: none;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
 }
+.container .ql-toolbar  input{
+  padding: 18x;
+  height: 25px;
+  background-color: rgba(247, 255, 255, 0.84);
+  align-self: center;
+  border: none;
+  margin: 0;
+ }
+
+ 
 
 @page {
   size: A4;
@@ -55,7 +67,7 @@ body {
   .container .ql-toolbar {
     display: none;
   }
-
+ 
   .container .ql-editor,
   .container .ql-blank {
     margin: 5px 0;
