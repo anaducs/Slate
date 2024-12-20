@@ -47,8 +47,8 @@ function Dashboard({ onUserLogin }) {
       //limit output to 5 elements
       const recentdoc = userDocuments.sort(
         (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-      );
-      setCardData(recentdoc);
+      )
+      setCardData(recentdoc.slice(0,4));
     };
     fetchData();
   }, []);

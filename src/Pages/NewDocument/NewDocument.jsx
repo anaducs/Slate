@@ -4,17 +4,17 @@ import { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
 import "./NewDocument.css";
+import axios from "axios";
 
 const toolbarOptions = [
-  ["home", "textfield"],
   [{ size: ["small", "medium", "large", "huge"] }],
-  [{ header: "1" }, { header: "2" }, { font: [] }],
+  [{ header: ["1", "2"] }, { font: [] }],
   [{ align: [] }],
   ["bold", "italic", "underline", "strike"],
   [{ list: "ordered" }, { list: "bullet" }],
   [{ indent: "-1" }, { indent: "+1" }],
   [{ script: "sub" }, { script: "super" }],
-  ["link", "image", "video"],
+  ["link", "image"],
   ["blockquote", "code-block"],
   [{ direction: "rtl" }],
   [{ color: [] }, { background: [] }],
@@ -22,6 +22,7 @@ const toolbarOptions = [
 ];
 
 function NewDocument() {
+  const [title, setTitle] = useState("");
   const [error, setError] = useState("");
   const [socket, setSocket] = useState(null);
   const [quill, setQuill] = useState(null);
@@ -29,54 +30,53 @@ function NewDocument() {
   const navigate = useNavigate();
 
   // Creating the editor
-  const wrapperRef = useCallback((wrap) => {
-    if (wrap == null) return;
-    wrap.innerHTML = "";
-    const editor = document.createElement("div");
-    wrap.append(editor);
+  const wrapperRef = useCallback(
+    (wrap) => {
+      if (wrap == null) return;
+      wrap.innerHTML = "";
+      const editor = document.createElement("div");
+      wrap.append(editor);
 
-    const q = new Quill(editor, {
-      theme: "snow",
-      modules: { toolbar: toolbarOptions },
-    });
+      const q = new Quill(editor, {
+        theme: "snow",
+        modules: { toolbar: toolbarOptions },
+      });
 
-    // Add custom toolbar buttons after initialization
-    const toolbar = q.getModule("toolbar");
+      const toolbar = q.getModule("toolbar");
 
-    // Add Home button first
-    const homeButton = document.createElement("button");
-    homeButton.className = "ql-home";
-    homeButton.innerHTML = `<svg viewBox="0 0 18 18">
-  <path d="M9 3L1 9h2v6h4V11h4v4h4V9h2z"></path>
-</svg>`;
-    toolbar.container.insertBefore(homeButton, toolbar.container.firstChild);
+      // Add Home button
+      const homeButton = document.createElement("button");
+      homeButton.className = "ql-home";
+      homeButton.innerHTML = `<img src="/assets/letter-s.png" alt="Slate" />`;
+      homeButton.querySelector("img").style.minWidth = "20px";
+      homeButton.querySelector("img").style.width = "25px";
+      homeButton.querySelector("img").style.height = "20px";
+      homeButton.querySelector("img").style.maxWidth = "30px";
+      toolbar.container.insertBefore(homeButton, toolbar.container.firstChild);
 
-    // Add Textfield input second
-    const textfieldButton = document.createElement("input");
-    textfieldButton.type = "text"; // Specify as a text input
-    textfieldButton.className = "ql-textfield";
-    textfieldButton.placeholder = "Untitled"; // Optional placeholder
-    toolbar.container.insertBefore(textfieldButton, homeButton.nextSibling);
+      // Add Textfield input
+      const textfieldButton = document.createElement("input");
+      textfieldButton.type = "text";
+      textfieldButton.id = "unni";
+      textfieldButton.value = title;
+      textfieldButton.placeholder = "Untitled";
+      toolbar.container.insertBefore(textfieldButton, homeButton.nextSibling);
 
-    // Define handlers
-    homeButton.addEventListener("click", () => {
-      navigate("/dashboard");
-    });
+      // Define handlers
+      homeButton.addEventListener("click", () => {
+        navigate("/dashboard");
+      });
 
-    toolbar.addHandler("textfield", () => {
-      
-      if (input) {
-        const range = q.getSelection();
-        if (range) {
-          q.insertText(range.index, input);
-        }
-      }
-    });
+      textfieldButton.addEventListener("change", async (e) => {
+        localStorage.setItem(documentId.toString(), e.target.value);
+      });
 
-    q.disable();
-    q.setText("Loading ...");
-    setQuill(q);
-  }, []);
+      q.disable();
+      q.setText("Loading ...");
+      setQuill(q);
+    },
+    [title]
+  );
 
   // Connect to server
   useEffect(() => {
@@ -90,7 +90,23 @@ function NewDocument() {
       sock.disconnect();
     };
   }, []);
-
+  //renaming document
+  useEffect(() => {
+    const dname = localStorage.getItem(documentId.toString());
+    setTitle(dname);
+    try {
+      const postName = async () => {
+        await axios.post(
+          `http://localhost:3001/api/document/${documentId}`,
+          { dname },
+          { withCredentials: true }
+        );
+      };
+      postName();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [title]);
   // Error handling
   useEffect(() => {
     if (!socket) return;
@@ -154,6 +170,8 @@ function NewDocument() {
   // Save document periodically
   useEffect(() => {
     if (!socket || !quill) return;
+
+    if (quill.getContents() == "") return;
 
     const interval = setInterval(() => {
       socket.emit("save-document", quill.getContents());

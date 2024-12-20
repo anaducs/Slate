@@ -1,6 +1,8 @@
 .container .ql-editor,
 .container .ql-blank {
+  min-width: 210mm;
   width: 210mm;
+  max-width: 210mm;
   min-height: 297mm;
   padding: 20mm;
   margin: 10mm;
@@ -22,32 +24,51 @@ body {
 }
 
 .container .ql-toolbar {
-  display: flex;
+  display: grid;
+  min-width: 500px;
+  gap: 5px;
+  height: 50px;
+  grid-template-columns: repeat(14, 1fr);
   position: sticky;
   align-items: center;
   justify-content: center;
   top: 0;
   z-index: 2;
-  padding: 0;
+  padding: 10px;
   background-color: rgb(205, 243, 254);
   border: none;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
 }
-.container .ql-toolbar  input{
+.container .ql-toolbar input {
   padding: 18x;
   height: 25px;
-  background-color: rgba(247, 255, 255, 0.84);
+  font-size: medium;
+  font-weight: 800;
+  background-color: transparent;
   align-self: center;
   border: none;
+  border-radius: 5px;
   margin: 0;
- }
-
- 
-
+  margin-left: 10px;
+  
+}
+.container .ql-toolbar input:focus {
+  outline:none;
+}
+.container .ql-toolbar .ql-formats {
+  display: flex !important;
+}
+.container .ql-toolbar img{
+  margin: 0;
+  width: 100%;
+}
 @page {
   size: A4;
   margin: 20mm;
 }
+
+
+
 
 @media print {
   body {
@@ -63,11 +84,14 @@ body {
     box-shadow: none;
     align-self: flex-start;
   }
+  .container .ql-toolbar .ql-home{
+    padding: 0;
+  }
 
   .container .ql-toolbar {
     display: none;
   }
- 
+
   .container .ql-editor,
   .container .ql-blank {
     margin: 5px 0;
@@ -75,6 +99,6 @@ body {
     box-shadow: none;
     overflow: visible;
     font-size: 16px;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: "Times New Roman", Times, serif;
   }
 }
