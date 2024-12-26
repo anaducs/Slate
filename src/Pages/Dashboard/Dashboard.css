@@ -31,10 +31,10 @@
 }
 
 .Dashboard-container .gridcontainer .header .searchResult {
-  width: 100%;
-  max-width: 501px;
+  width: 666.67px;
+  color: rgb(42, 40, 40);
   left: 11%;
-  min-height: auto;
+  height: auto;
   max-height: 200px;
   background-color: rgba(226, 226, 226, 0.853);
   position: absolute;
@@ -43,6 +43,7 @@
   z-index: 50;
   overflow-y: auto;
   border-radius: 10px;
+ 
 }
 .Dashboard-container .gridcontainer .header .profile,
 .Dashboard-container .gridcontainer .Slate {
@@ -143,4 +144,25 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.Dashboard-container ul{
+  padding:0;
+  width: 100%;  
+  
+}
+
+.Dashboard-container li{
+  list-style: none;
+  width: 100%;
+  padding: 8px 10px;
+  cursor: pointer;
+  margin: 8px 0;
+  background-color: rgba(256,256,256,1);
+  border-radius: 10px;
+  scale: 1;
+}
+
+.Dashboard-container li:hover{
+  outline: 1px solid silver;
+  scale: 1.02;
 }

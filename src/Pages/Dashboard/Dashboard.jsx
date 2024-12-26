@@ -9,9 +9,8 @@ function Dashboard({ onUserLogin }) {
   const [user, setUser] = useState(null);
   const [cardData, setCardData] = useState([]);
   const [input, setInput] = useState("");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState([]);
   const navigate = useNavigate();
-  const [document, setDocument] = useState(null);
   const params = useParams();
 
   useEffect(() => {
@@ -31,27 +30,36 @@ function Dashboard({ onUserLogin }) {
     }
   }, []);
 
-  //open recent documents
-
   //open new document
   const handleNewDocument = () => {
     navigate("/document");
   };
 
-  //cardGenerator
+  //cardGenerator and search
   useEffect(() => {
     const fetchData = async () => {
       const url = "http://localhost:3001/api/users/getDocument";
       const response = await axios.get(url, { withCredentials: true });
       const userDocuments = response.data;
+
       //limit output to 5 elements
       const recentdoc = userDocuments.sort(
         (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-      )
-      setCardData(recentdoc.slice(0,4));
+      );
+      setCardData(recentdoc.slice(0, 4));
+      //search
+
+      const filterd = userDocuments.filter(
+        (doc) =>
+          input &&
+          doc.name &&
+          doc.name.toLowerCase().includes(input.toLowerCase())
+      );
+
+      setResult(filterd);
     };
     fetchData();
-  }, []);
+  }, [user, input]);
 
   //logout
   const logout = "http://localhost:3001/api/users/logout";
@@ -73,12 +81,32 @@ function Dashboard({ onUserLogin }) {
             <div className="searchField">
               <div className="searchBar">
                 <input
+                  onChange={(e) => {
+                    const inp = e.target.value;
+                    setInput(inp);
+                  }}
                   type="text"
                   placeholder="search"
                   style={{ fontSize: "18px" }}
                 />
               </div>
-              {result && <div className="searchResult"></div>}
+
+              {input && result && (
+                <div className="searchResult">
+                  <ul>
+                    {result.map((ele) => (
+                      <li
+                        key={ele._id}
+                        onClick={() => {
+                          navigate(`/document/${user.id}/${ele._id}`);
+                        }}
+                      >
+                        {ele.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             <div className="profile">
               <h4>{user && user.name}</h4>

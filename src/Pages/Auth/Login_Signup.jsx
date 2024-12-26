@@ -57,25 +57,21 @@ function Login_Signup({ onUserLogin }) {
     setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
   };
+
   //login logic
   const userLogin = async () => {
-    if (!formValidation()) return;
     try {
       const response = await axios.post(
         "http://localhost:3001/api/users/login",
         { email, password },
         { withCredentials: true }
       );
-      const data = response.data.user;
-      
-     
 
       navigate("/dashboard");
     } catch (err) {
-      let errors = {};
-      const msg = errors.msg;
-      errors = msg;
-      setServerResponse(errors);
+      let msg = "";
+      msg = err.response.data;
+      setServerResponse(msg);
     }
   };
 
@@ -114,7 +110,6 @@ function Login_Signup({ onUserLogin }) {
       );
       msg = response.data.msg;
       setEmailVerify(msg);
-      console.log(msg);
     } catch (err) {
       let errors = "";
       if (axios.isAxiosError(err)) {
@@ -181,8 +176,8 @@ function Login_Signup({ onUserLogin }) {
             <p>
               New User ?<span onClick={updateState}> Signup Now</span>
             </p>
+            {serverResponse && <div className="error"> {serverResponse.msg}</div>}
           </div>
-          {serverResponse && <div className="error">{serverResponse.msg}</div>}
         </form>
       ) : (
         //signup page

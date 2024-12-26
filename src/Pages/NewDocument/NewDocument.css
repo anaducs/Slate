@@ -26,18 +26,18 @@ body {
 .container .ql-toolbar {
   display: grid;
   min-width: 500px;
-  gap: 5px;
-  height: 50px;
-  grid-template-columns: repeat(14, 1fr);
-  position: sticky;
-  align-items: center;
-  justify-content: center;
+  gap: 10px;
+  grid-template-rows: repeat(2,1fr);
+  position: sticky;  
   top: 0;
   z-index: 2;
   padding: 10px;
   background-color: rgb(205, 243, 254);
   border: none;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  min-height: 120px;
+  height: 120px;
 }
 .container .ql-toolbar input {
   padding: 18x;
@@ -45,7 +45,6 @@ body {
   font-size: medium;
   font-weight: 800;
   background-color: transparent;
-  align-self: center;
   border: none;
   border-radius: 5px;
   margin: 0;
@@ -55,17 +54,72 @@ body {
 .container .ql-toolbar input:focus {
   outline:none;
 }
-.container .ql-toolbar .ql-formats {
-  display: flex !important;
-}
 .container .ql-toolbar img{
   margin: 0;
   width: 100%;
 }
+.ql-toolbar .customMade{
+  grid-row-start: 1;
+  grid-row-end: 2;
+  display: grid;
+  grid-template-columns: 20px repeat(3,1fr);
+  gap: 10px;
+}
+
+.ql-toolbar .customMade .pos {
+  position: relative;
+  grid-column-start: 4;
+  grid-column-end: 5;
+}
+
+.ql-toolbar .customMade .pos .droparea{
+  background-color:rgba(138, 136, 136, 0.999);
+  position: absolute;
+  top: 40px;
+  right: 50%;
+  border-radius: 10px;
+  overflow: hidden;
+   padding: 3px;  
+   display: flex;
+   flex-direction: row-reverse;
+   justify-content: space-between;
+   align-items: center;
+   width: 300px;
+}
+.ql-toolbar .customMade .pos .droparea input{
+  font-size: 12px;
+}
+
+
+.ql-toolbar .customMade .pos .sharedropdown .contain .resize{
+  width: 10px;
+}
+
+.ql-toolbar .customMade .pos .sharedropdown input{
+  
+  color: white;
+}
+
+
+.ql-toolbar .customMade .pos .hidden{
+  display: none;
+}
+
+.ql-toolbar .formatWrapper{
+    display: flex;
+ 
+
+}
+
+
+
+
+
 @page {
   size: A4;
   margin: 20mm;
 }
+
 
 
 

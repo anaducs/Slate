@@ -5,7 +5,7 @@ function Cards({ src, id, onCardClick }) {
     <div>
       <div className="dynamic-container">
         <div className="imagewrap" onClick={onCardClick}>
-          <img src="public/assets/document.svg" style={{ width: "100px" }} alt={name} />
+          <img src="/assets/document.svg" style={{ width: "100px" }} alt={name} />
         </div>
         <h4>{id}</h4>
       </div>

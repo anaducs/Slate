@@ -23,106 +23,68 @@ const toolbarOptions = [
 
 function NewDocument() {
   const [title, setTitle] = useState("");
+  const [docn, setDocn] = useState("");
   const [error, setError] = useState("");
   const [socket, setSocket] = useState(null);
   const [quill, setQuill] = useState(null);
   const { id: documentId, uid: userId } = useParams();
   const navigate = useNavigate();
+  //getting name
+  useEffect(() => {
+    const fetchname = async () => {
+      const url = ` http://localhost:3001/api/document/${documentId}`;
+      const res = await axios.get(url, { withCredentials: true });
+      if (res == null) return;
+      localStorage.setItem(documentId.toString(), res.data);
+      setDocn(res.data);
+    };
+    fetchname();
+    return () => {};
+  }, [documentId,docn]);
 
-  // Creating the editor
-  const wrapperRef = useCallback(
-    (wrap) => {
-      if (wrap == null) return;
-      wrap.innerHTML = "";
-      const editor = document.createElement("div");
-      wrap.append(editor);
+  //server connection
 
-      const q = new Quill(editor, {
-        theme: "snow",
-        modules: { toolbar: toolbarOptions },
-      });
-
-      const toolbar = q.getModule("toolbar");
-
-      // Add Home button
-      const homeButton = document.createElement("button");
-      homeButton.className = "ql-home";
-      homeButton.innerHTML = `<img src="/assets/letter-s.png" alt="Slate" />`;
-      homeButton.querySelector("img").style.minWidth = "20px";
-      homeButton.querySelector("img").style.width = "25px";
-      homeButton.querySelector("img").style.height = "20px";
-      homeButton.querySelector("img").style.maxWidth = "30px";
-      toolbar.container.insertBefore(homeButton, toolbar.container.firstChild);
-
-      // Add Textfield input
-      const textfieldButton = document.createElement("input");
-      textfieldButton.type = "text";
-      textfieldButton.id = "unni";
-      textfieldButton.value = title;
-      textfieldButton.placeholder = "Untitled";
-      toolbar.container.insertBefore(textfieldButton, homeButton.nextSibling);
-
-      // Define handlers
-      homeButton.addEventListener("click", () => {
-        navigate("/dashboard");
-      });
-
-      textfieldButton.addEventListener("change", async (e) => {
-        localStorage.setItem(documentId.toString(), e.target.value);
-      });
-
-      q.disable();
-      q.setText("Loading ...");
-      setQuill(q);
-    },
-    [title]
-  );
-
-  // Connect to server
   useEffect(() => {
     const sock = io("http://localhost:3001", {
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 7,
+      reconnectionDelay: 1000,
+      timeout: 5000,
     });
-
     setSocket(sock);
 
     return () => {
       sock.disconnect();
     };
   }, []);
-  //renaming document
-  useEffect(() => {
-    const dname = localStorage.getItem(documentId.toString());
-    setTitle(dname);
-    try {
-      const postName = async () => {
-        await axios.post(
-          `http://localhost:3001/api/document/${documentId}`,
-          { dname },
-          { withCredentials: true }
-        );
-      };
-      postName();
-    } catch (e) {
-      console.log(e);
-    }
-  }, [title]);
-  // Error handling
-  useEffect(() => {
-    if (!socket) return;
 
-    const errorHandler = (error) => {
-      setError(error);
-      navigate("/dashboard");
+  // Load document
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+    socket.once("load-document", (document) => {
+      quill.setContents(document);
+      quill.enable();
+    });
+    socket.emit("get-document", userId, documentId);
+    return () => {
+      socket.off("load-document");
     };
+  }, [socket, quill, userId, documentId]);
 
-    socket.on("error", errorHandler);
+  // Save document periodically
+  useEffect(() => {
+    if (!socket || !quill) return;
+    const interval = setInterval(() => {
+      socket.emit("save-document", quill.getContents());
+    }, 2000);
 
     return () => {
-      socket.off("error", errorHandler);
-      setError("");
+      clearInterval(interval);
     };
-  }, [socket, navigate]);
+  }, [socket, quill]);
+
+
 
   // Text change detection
   useEffect(() => {
@@ -147,7 +109,6 @@ function NewDocument() {
     const handler = (delta) => {
       quill.updateContents(delta);
     };
-
     socket.on("received-message", handler);
 
     return () => {
@@ -155,32 +116,144 @@ function NewDocument() {
     };
   }, [socket, quill]);
 
-  // Load document
+  // Error handling
   useEffect(() => {
-    if (socket == null || quill == null) return;
+    if (!socket) return;
 
-    socket.once("load-document", (document) => {
-      quill.setContents(document);
-      quill.enable();
-    });
+    const errorHandler = (error) => {
+      setError(error);
+      alert(error);
 
-    socket.emit("get-document", userId, documentId);
-  }, [socket, quill, documentId, userId]);
+      navigate("/dashboard");
+    };
 
-  // Save document periodically
-  useEffect(() => {
-    if (!socket || !quill) return;
-
-    if (quill.getContents() == "") return;
-
-    const interval = setInterval(() => {
-      socket.emit("save-document", quill.getContents());
-    }, 2000);
+    socket.on("error", errorHandler);
 
     return () => {
-      clearInterval(interval);
+      setError("");
+      socket.off("error");
     };
-  }, [socket, quill]);
+  }, [error]);
+
+  // Creating the editor
+  const wrapperRef = useCallback((wrap) => {
+    if (wrap == null) return;
+    wrap.innerHTML = "";
+    const editor = document.createElement("div");
+    wrap.append(editor);
+
+    const q = new Quill(editor, {
+      theme: "snow",
+      modules: { toolbar: toolbarOptions },
+    });
+
+    const toolbar = q.getModule("toolbar");
+
+    // Add Home button
+    const homeButton = document.createElement("button");
+    homeButton.className = "custom";
+    homeButton.innerHTML = `<img src="/assets/letter-s.png" alt="Slate" />`;
+    homeButton.querySelector("img").style.minWidth = "20px";
+    homeButton.querySelector("img").style.width = "25px";
+    homeButton.querySelector("img").style.height = "20px";
+    homeButton.querySelector("img").style.maxWidth = "30px";
+    toolbar.container.insertBefore(homeButton, toolbar.container.firstChild);
+   //docname
+    const tile = localStorage.getItem(documentId.toString());
+    setTitle(tile);
+
+    // Add Textfield input
+    const textfieldButton = document.createElement("input");
+    textfieldButton.type = "text";
+    textfieldButton.className = "custom";
+    textfieldButton.value = title;
+    textfieldButton.placeholder = "Untitled";
+    toolbar.container.insertBefore(textfieldButton, homeButton.nextSibling);
+
+    //ADD SHARE button
+
+    const shareButton = document.createElement("button");
+    shareButton.className = "sharedropdown";
+    shareButton.innerHTML = `<img src="/assets/share.svg" alt="Slate" />`;
+
+    toolbar.container.appendChild(shareButton);
+
+    //managig share area
+
+    shareButton.addEventListener("click", () => {
+      wrappcontain.classList.toggle("hidden");
+    });
+
+    //text area
+
+    const custotext = document.createElement("input");
+    custotext.type = "text";
+    custotext.className = "text";
+    toolbar.container.appendChild(custotext);
+
+    //button
+    const custButton = document.createElement("button");
+    custButton.innerHTML = `<img src="/assets/send.svg" alt="Slate" />`;
+    custButton.className = "btn";
+    toolbar.container.appendChild(custButton);
+
+    //wrapcontainer
+    const wrappcontain = document.createElement("div");
+    wrappcontain.className = "droparea hidden";
+    wrappcontain.appendChild(custButton);
+    wrappcontain.appendChild(custotext);
+
+    toolbar.container.appendChild(wrappcontain);
+
+    //WRAP share option
+
+    const customShare = document.createElement("div");
+    customShare.className = "custom pos";
+    const customShareelement =
+      toolbar.container.querySelectorAll(".sharedropdown");
+    customShareelement.forEach((elemnt) => {
+      customShare.appendChild(elemnt);
+    });
+    customShare.appendChild(wrappcontain);
+
+    toolbar.container.appendChild(customShare);
+
+    //wrapcustom toolbar
+
+    const customInputwrapper = document.createElement("div");
+    customInputwrapper.className = "customMade";
+    const customElements = toolbar.container.querySelectorAll(".custom");
+    customElements.forEach((element) => {
+      customInputwrapper.appendChild(element);
+    });
+
+    toolbar.container.appendChild(customInputwrapper);
+
+    //WRAPP toolbar
+    const formatWrapper = document.createElement("div");
+    formatWrapper.className = "formatWrapper";
+    const getElements = toolbar.container.querySelectorAll(".ql-formats");
+    getElements.forEach((element) => {
+      formatWrapper.appendChild(element);
+    });
+
+    toolbar.container.appendChild(formatWrapper);
+
+    // Define handlers
+    homeButton.addEventListener("click", () => {
+      navigate("/dashboard");
+    });
+
+    textfieldButton.addEventListener("blur", async (e) => {
+      const tesxt = e.target.value;
+      const url = ` http://localhost:3001/api/document/${documentId}`;
+      const res = await axios.post(url, { tesxt }, { withCredentials: true });
+    });
+
+    q.disable();
+    q.setText("Loading ...");
+    setQuill(q);
+  }, [title,docn]);
 
   return <div className="container" ref={wrapperRef}></div>;
 }
