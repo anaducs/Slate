@@ -61,20 +61,19 @@ function Login_Signup() {
   //login logic
   const userLogin = async () => {
     try {
-      const response = await axios.post(
+      const respon = await axios.post(
         "https://slatebackend-wrwi.onrender.com/api/users/login",
         { email, password },
         { withCredentials: true }
       );
-      console.log(response);
-      
-      // if (response.status == 200) {
-      //   navigate("/dashboard");
-      // }
+
+      if (respon?.status == 200) {
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.log(err, "err");
       let msg = "";
-      msg = err.response.data
+      msg = err.response.data;
       setServerResponse(msg);
     }
   };
