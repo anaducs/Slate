@@ -66,8 +66,9 @@ function Login_Signup({ onUserLogin }) {
         { email, password },
         { withCredentials: true }
       );
-
-      navigate("/dashboard");
+      if (response.status(200)) {
+        navigate("/dashboard");
+      }
     } catch (err) {
       let msg = "";
       msg = err.response.data;
