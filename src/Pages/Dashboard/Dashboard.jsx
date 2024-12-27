@@ -14,7 +14,8 @@ function Dashboard({ onUserLogin }) {
   const params = useParams();
 
   useEffect(() => {
-    const url = "http://localhost:3001/api/users/dashboard";
+    const url =
+      "http://slatebackend-446007.as.r.appspot.com/api/users/dashboard";
     try {
       const fetchData = async () => {
         const response = await axios.get(url, { withCredentials: true });
@@ -38,7 +39,8 @@ function Dashboard({ onUserLogin }) {
   //cardGenerator and search
   useEffect(() => {
     const fetchData = async () => {
-      const url = "http://localhost:3001/api/users/getDocument";
+      const url =
+        "http://slatebackend-446007.as.r.appspot.com/api/users/getDocument";
       const response = await axios.get(url, { withCredentials: true });
       const userDocuments = response.data;
 
@@ -62,7 +64,7 @@ function Dashboard({ onUserLogin }) {
   }, [user, input]);
 
   //logout
-  const logout = "http://localhost:3001/api/users/logout";
+  const logout = "http://slatebackend-446007.as.r.appspot.com/api/users/logout";
   const handleLogout = async () => {
     try {
       const res = await axios.post(logout, {}, { withCredentials: true });

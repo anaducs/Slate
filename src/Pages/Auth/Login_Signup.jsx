@@ -62,7 +62,7 @@ function Login_Signup({ onUserLogin }) {
   const userLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/users/login",
+        "https://slatebackend-wrwi.onrender.com/api/users/login",
         { email, password },
         { withCredentials: true }
       );
@@ -101,7 +101,7 @@ function Login_Signup({ onUserLogin }) {
     if (!formValidation()) return;
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/users/register",
+        "https://slatebackend-wrwi.onrender.com/api/users/register",
         {
           name,
           email,
@@ -176,7 +176,9 @@ function Login_Signup({ onUserLogin }) {
             <p>
               New User ?<span onClick={updateState}> Signup Now</span>
             </p>
-            {serverResponse && <div className="error"> {serverResponse.msg}</div>}
+            {serverResponse && (
+              <div className="error"> {serverResponse.msg}</div>
+            )}
           </div>
         </form>
       ) : (

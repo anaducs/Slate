@@ -32,7 +32,7 @@ function NewDocument() {
   //getting name
   useEffect(() => {
     const fetchname = async () => {
-      const url = ` http://localhost:3001/api/document/${documentId}`;
+      const url = ` https://slatebackend-wrwi.onrender.com/api/document/${documentId}`;
       const res = await axios.get(url, { withCredentials: true });
       if (res == null) return;
       localStorage.setItem(documentId.toString(), res.data);
@@ -40,12 +40,12 @@ function NewDocument() {
     };
     fetchname();
     return () => {};
-  }, [documentId,docn]);
+  }, [documentId, docn]);
 
   //server connection
 
   useEffect(() => {
-    const sock = io("http://localhost:3001", {
+    const sock = io("https://slatebackend-wrwi.onrender.com", {
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 7,
@@ -83,8 +83,6 @@ function NewDocument() {
       clearInterval(interval);
     };
   }, [socket, quill]);
-
-
 
   // Text change detection
   useEffect(() => {
@@ -136,124 +134,127 @@ function NewDocument() {
   }, [error]);
 
   // Creating the editor
-  const wrapperRef = useCallback((wrap) => {
-    if (wrap == null) return;
-    wrap.innerHTML = "";
-    const editor = document.createElement("div");
-    wrap.append(editor);
+  const wrapperRef = useCallback(
+    (wrap) => {
+      if (wrap == null) return;
+      wrap.innerHTML = "";
+      const editor = document.createElement("div");
+      wrap.append(editor);
 
-    const q = new Quill(editor, {
-      theme: "snow",
-      modules: { toolbar: toolbarOptions },
-    });
+      const q = new Quill(editor, {
+        theme: "snow",
+        modules: { toolbar: toolbarOptions },
+      });
 
-    const toolbar = q.getModule("toolbar");
+      const toolbar = q.getModule("toolbar");
 
-    // Add Home button
-    const homeButton = document.createElement("button");
-    homeButton.className = "custom";
-    homeButton.innerHTML = `<img src="/assets/letter-s.png" alt="Slate" />`;
-    homeButton.querySelector("img").style.minWidth = "20px";
-    homeButton.querySelector("img").style.width = "25px";
-    homeButton.querySelector("img").style.height = "20px";
-    homeButton.querySelector("img").style.maxWidth = "30px";
-    toolbar.container.insertBefore(homeButton, toolbar.container.firstChild);
-   //docname
-    const tile = localStorage.getItem(documentId.toString());
-    setTitle(tile);
+      // Add Home button
+      const homeButton = document.createElement("button");
+      homeButton.className = "custom";
+      homeButton.innerHTML = `<img src="/assets/letter-s.png" alt="Slate" />`;
+      homeButton.querySelector("img").style.minWidth = "20px";
+      homeButton.querySelector("img").style.width = "25px";
+      homeButton.querySelector("img").style.height = "20px";
+      homeButton.querySelector("img").style.maxWidth = "30px";
+      toolbar.container.insertBefore(homeButton, toolbar.container.firstChild);
+      //docname
+      const tile = localStorage.getItem(documentId.toString());
+      setTitle(tile);
 
-    // Add Textfield input
-    const textfieldButton = document.createElement("input");
-    textfieldButton.type = "text";
-    textfieldButton.className = "custom";
-    textfieldButton.value = title;
-    textfieldButton.placeholder = "Untitled";
-    toolbar.container.insertBefore(textfieldButton, homeButton.nextSibling);
+      // Add Textfield input
+      const textfieldButton = document.createElement("input");
+      textfieldButton.type = "text";
+      textfieldButton.className = "custom";
+      textfieldButton.value = title;
+      textfieldButton.placeholder = "Untitled";
+      toolbar.container.insertBefore(textfieldButton, homeButton.nextSibling);
 
-    //ADD SHARE button
+      //ADD SHARE button
 
-    const shareButton = document.createElement("button");
-    shareButton.className = "sharedropdown";
-    shareButton.innerHTML = `<img src="/assets/share.svg" alt="Slate" />`;
+      const shareButton = document.createElement("button");
+      shareButton.className = "sharedropdown";
+      shareButton.innerHTML = `<img src="/assets/share.svg" alt="Slate" />`;
 
-    toolbar.container.appendChild(shareButton);
+      toolbar.container.appendChild(shareButton);
 
-    //managig share area
+      //managig share area
 
-    shareButton.addEventListener("click", () => {
-      wrappcontain.classList.toggle("hidden");
-    });
+      shareButton.addEventListener("click", () => {
+        wrappcontain.classList.toggle("hidden");
+      });
 
-    //text area
+      //text area
 
-    const custotext = document.createElement("input");
-    custotext.type = "text";
-    custotext.className = "text";
-    toolbar.container.appendChild(custotext);
+      const custotext = document.createElement("input");
+      custotext.type = "text";
+      custotext.className = "text";
+      toolbar.container.appendChild(custotext);
 
-    //button
-    const custButton = document.createElement("button");
-    custButton.innerHTML = `<img src="/assets/send.svg" alt="Slate" />`;
-    custButton.className = "btn";
-    toolbar.container.appendChild(custButton);
+      //button
+      const custButton = document.createElement("button");
+      custButton.innerHTML = `<img src="/assets/send.svg" alt="Slate" />`;
+      custButton.className = "btn";
+      toolbar.container.appendChild(custButton);
 
-    //wrapcontainer
-    const wrappcontain = document.createElement("div");
-    wrappcontain.className = "droparea hidden";
-    wrappcontain.appendChild(custButton);
-    wrappcontain.appendChild(custotext);
+      //wrapcontainer
+      const wrappcontain = document.createElement("div");
+      wrappcontain.className = "droparea hidden";
+      wrappcontain.appendChild(custButton);
+      wrappcontain.appendChild(custotext);
 
-    toolbar.container.appendChild(wrappcontain);
+      toolbar.container.appendChild(wrappcontain);
 
-    //WRAP share option
+      //WRAP share option
 
-    const customShare = document.createElement("div");
-    customShare.className = "custom pos";
-    const customShareelement =
-      toolbar.container.querySelectorAll(".sharedropdown");
-    customShareelement.forEach((elemnt) => {
-      customShare.appendChild(elemnt);
-    });
-    customShare.appendChild(wrappcontain);
+      const customShare = document.createElement("div");
+      customShare.className = "custom pos";
+      const customShareelement =
+        toolbar.container.querySelectorAll(".sharedropdown");
+      customShareelement.forEach((elemnt) => {
+        customShare.appendChild(elemnt);
+      });
+      customShare.appendChild(wrappcontain);
 
-    toolbar.container.appendChild(customShare);
+      toolbar.container.appendChild(customShare);
 
-    //wrapcustom toolbar
+      //wrapcustom toolbar
 
-    const customInputwrapper = document.createElement("div");
-    customInputwrapper.className = "customMade";
-    const customElements = toolbar.container.querySelectorAll(".custom");
-    customElements.forEach((element) => {
-      customInputwrapper.appendChild(element);
-    });
+      const customInputwrapper = document.createElement("div");
+      customInputwrapper.className = "customMade";
+      const customElements = toolbar.container.querySelectorAll(".custom");
+      customElements.forEach((element) => {
+        customInputwrapper.appendChild(element);
+      });
 
-    toolbar.container.appendChild(customInputwrapper);
+      toolbar.container.appendChild(customInputwrapper);
 
-    //WRAPP toolbar
-    const formatWrapper = document.createElement("div");
-    formatWrapper.className = "formatWrapper";
-    const getElements = toolbar.container.querySelectorAll(".ql-formats");
-    getElements.forEach((element) => {
-      formatWrapper.appendChild(element);
-    });
+      //WRAPP toolbar
+      const formatWrapper = document.createElement("div");
+      formatWrapper.className = "formatWrapper";
+      const getElements = toolbar.container.querySelectorAll(".ql-formats");
+      getElements.forEach((element) => {
+        formatWrapper.appendChild(element);
+      });
 
-    toolbar.container.appendChild(formatWrapper);
+      toolbar.container.appendChild(formatWrapper);
 
-    // Define handlers
-    homeButton.addEventListener("click", () => {
-      navigate("/dashboard");
-    });
+      // Define handlers
+      homeButton.addEventListener("click", () => {
+        navigate("/dashboard");
+      });
 
-    textfieldButton.addEventListener("blur", async (e) => {
-      const tesxt = e.target.value;
-      const url = ` http://localhost:3001/api/document/${documentId}`;
-      const res = await axios.post(url, { tesxt }, { withCredentials: true });
-    });
+      textfieldButton.addEventListener("blur", async (e) => {
+        const tesxt = e.target.value;
+        const url = ` https://slatebackend-wrwi.onrender.com/api/document/${documentId}`;
+        const res = await axios.post(url, { tesxt }, { withCredentials: true });
+      });
 
-    q.disable();
-    q.setText("Loading ...");
-    setQuill(q);
-  }, [title,docn]);
+      q.disable();
+      q.setText("Loading ...");
+      setQuill(q);
+    },
+    [title, docn]
+  );
 
   return <div className="container" ref={wrapperRef}></div>;
 }
