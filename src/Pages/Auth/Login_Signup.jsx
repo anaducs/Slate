@@ -3,7 +3,7 @@ import "./Login_Signup.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-function Login_Signup({ onUserLogin }) {
+function Login_Signup() {
   const [isLogin, setLogin] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -66,7 +66,6 @@ function Login_Signup({ onUserLogin }) {
         { email, password },
         { withCredentials: true }
       );
-      console.log(response.getHeader(), "login");
       if (response.status(200)) {
         navigate("/dashboard");
       }
