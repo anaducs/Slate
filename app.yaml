@@ -1,0 +1,9 @@
+runtime: nodejs22  # or nodejs20 if you prefer, as long as it's compatible
+
+handlers:
+  - url: /static
+    static_dir: build/static  # Serve static files (JS, CSS, images, etc.) from the build directory
+
+  - url: /.*  # Handle all other routes
+    static_files: build/index.html  # Serve the main HTML file for React
+    upload: build/index.html
