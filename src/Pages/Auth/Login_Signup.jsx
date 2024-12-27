@@ -64,10 +64,10 @@ function Login_Signup({ onUserLogin }) {
       const response = await axios.post(
         "https://slatebackend-wrwi.onrender.com/api/users/login",
         { email, password },
-        { withCredentials: true }
-        
-        console.log(response.getHeader(),"login");
+        { withCredentials: true }      
+       
       );
+       console.log(response.getHeader(),"login");
       if (response.status(200)) {
         navigate("/dashboard");
       }
