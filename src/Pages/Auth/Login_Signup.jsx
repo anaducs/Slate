@@ -66,10 +66,14 @@ function Login_Signup() {
         { email, password },
         { withCredentials: true }
       );
+      console.log(response);
+
       if (response.status(200)) {
         navigate("/dashboard");
       }
     } catch (err) {
+      console.log(err, "err");
+
       let msg = "";
       msg = err.response.data;
       setServerResponse(msg);
