@@ -113,7 +113,7 @@ function Dashboard({ onUserLogin }) {
             <div className="profile">
               <h4>{user && user.name}</h4>
               <img
-                src="public/assets/logut.svg"
+                src="/assets/logut.svg"
                 alt=""
                 onClick={handleLogout}
                 width={"25px"}
@@ -129,7 +129,7 @@ function Dashboard({ onUserLogin }) {
               <div className="card">
                 <div className="img-wrap" onClick={handleNewDocument}>
                   <img
-                    src="public/assets/create.svg"
+                    src="/assets/create.svg"
                     style={{ width: "80px" }}
                     alt="+"
                   />
