@@ -66,9 +66,11 @@ function Login_Signup() {
         { email, password },
         { withCredentials: true }
       );
-      if (response.status == 200) {
-        navigate("/dashboard");
-      }
+      console.log(response);
+      
+      // if (response.status == 200) {
+      //   navigate("/dashboard");
+      // }
     } catch (err) {
       console.log(err, "err");
       let msg = "";
