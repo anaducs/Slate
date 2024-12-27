@@ -1,0 +1,17 @@
+# Query: http://slatebackend-446007.as.r.appspot.com
+# ContextLines: 1
+
+3 results - 1 file
+
+src\Pages\Dashboard\Dashboard.jsx:
+  17      const url =
+  18:       "https://slatebackend-wrwi.onrender.com/api/users/dashboard";
+  19      try {
+
+  42        const url =
+  43:         "https://slatebackend-wrwi.onrender.com/api/users/getDocument";
+  44        const response = await axios.get(url, { withCredentials: true });
+
+  66    //logout
+  67:   const logout = "https://slatebackend-wrwi.onrender.com/api/users/logout";
+  68    const handleLogout = async () => {

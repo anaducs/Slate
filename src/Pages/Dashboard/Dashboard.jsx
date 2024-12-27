@@ -14,8 +14,7 @@ function Dashboard({ onUserLogin }) {
   const params = useParams();
 
   useEffect(() => {
-    const url =
-      "http://slatebackend-446007.as.r.appspot.com/api/users/dashboard";
+    const url = "https://slatebackend-wrwi.onrender.com/api/users/dashboard";
     try {
       const fetchData = async () => {
         const response = await axios.get(url, { withCredentials: true });
@@ -40,7 +39,7 @@ function Dashboard({ onUserLogin }) {
   useEffect(() => {
     const fetchData = async () => {
       const url =
-        "http://slatebackend-446007.as.r.appspot.com/api/users/getDocument";
+        "https://slatebackend-wrwi.onrender.com/api/users/getDocument";
       const response = await axios.get(url, { withCredentials: true });
       const userDocuments = response.data;
 
@@ -64,7 +63,7 @@ function Dashboard({ onUserLogin }) {
   }, [user, input]);
 
   //logout
-  const logout = "http://slatebackend-446007.as.r.appspot.com/api/users/logout";
+  const logout = "https://slatebackend-wrwi.onrender.com/api/users/logout";
   const handleLogout = async () => {
     try {
       const res = await axios.post(logout, {}, { withCredentials: true });
